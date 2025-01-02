@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Loader2 } from 'lucide-react';
@@ -18,14 +18,15 @@ export function NewsFeed() {
   } = useNewsArticles();
 
   const { bookmarks, toggleBookmark } = useBookmarks();
-  const { ref, inView } = useInView();
+  const { ref, inView } = useInView({ threshold: 0.5 });
   const prevInView = useRef(inView);
 
-  // Load more articles when the observer is in view
-  if (inView && !prevInView.current && hasNextPage && !isFetchingNextPage) {
-    fetchNextPage();
-  }
-  prevInView.current = inView;
+  useEffect(() => {
+    if (inView && !prevInView.current && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+    prevInView.current = inView;
+  }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // Display loading state
   if (isLoading) {

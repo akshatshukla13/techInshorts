@@ -21,6 +21,8 @@ export function NewsCard({ article, onBookmark, isBookmarked }: NewsCardProps) {
       } catch (error) {
         console.error('Error sharing:', error);
       }
+    } else {
+      console.log('Sharing not supported on this device.');
     }
   };
 
@@ -29,13 +31,17 @@ export function NewsCard({ article, onBookmark, isBookmarked }: NewsCardProps) {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -50 }}
-      className="relative h-screen w-full overflow-hidden bg-black dark:bg-gray-900"
+      className="relative min-h-screen w-full overflow-hidden bg-black dark:bg-gray-900"
     >
       <div className="h-[60vh] relative">
         <img
-          src={article.urlToImage || 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=1000'}
+          src={
+            article.urlToImage ||
+            'https://via.placeholder.com/1000x500.png?text=No+Image+Available'
+          }
           alt={article.title}
           className="w-full h-full object-cover"
+          loading="lazy"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50" />
       </div>
@@ -52,25 +58,29 @@ export function NewsCard({ article, onBookmark, isBookmarked }: NewsCardProps) {
           </h2>
 
           <p className="text-white/90 line-clamp-3">
-            {article.description}
+            {article.description || 'No description available.'}
           </p>
 
           <div className="flex items-center justify-between pt-4">
             <div className="flex gap-4">
               <button
                 onClick={() => onBookmark(article)}
+                aria-label="Bookmark"
                 className="text-white hover:text-yellow-400 transition-colors"
               >
-                <Bookmark className={`w-6 h-6 ${isBookmarked ? 'fill-yellow-400' : ''}`} />
+                <Bookmark
+                  className={`w-6 h-6 ${isBookmarked ? 'fill-yellow-400' : ''}`}
+                />
               </button>
               <button
                 onClick={handleShare}
+                aria-label="Share"
                 className="text-white hover:text-blue-400 transition-colors"
               >
                 <Share2 className="w-6 h-6" />
               </button>
             </div>
-            
+
             <a
               href={article.url}
               target="_blank"
